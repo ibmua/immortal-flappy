@@ -83,6 +83,8 @@ This is the final step, if everything before was done right and enough you shoul
 Interestingly, the final strategy of the bird in my case seems to be staying near the bottom pipe all of the time.
 
 ##	Pixels and RAM/Storage space
+The network is fed with info about pixels of two frames - current and the one right before it.
+
 You can definitely cut the amount of both RAM and storage space used in half by simply switching to `STATE_CHANNELS	=	2` which is going to mean that you're using a single channel per image. For example, taking the red color channel and subtracting the green and using only this result. Others have simply turned the image grayscale, which I don't think is very good, as it seems to lose the natural color contrast between objects, information which obviously helps the network learn and distinguish between objects and features better. In my experience, though, I first accidentally only used the red channel and still trained an ♾ immortal Flappy 🐦 bot on this data. Later I used two channels - red and green, cutting only the blue out. Which is what the default is. I can't tell if your chance of training an immortal bot will grow, or get smaller as a result of moving from 2 color channels to 1 and I also haven't yet tried the preprocessing that I made a default for `STATE_CHANNELS	=	2`, so it's your own adventure.
 
 `memory_capacity` can also be set to a lower value, so that your datasets are each smaller in case you have little amount of RAM. This shouldn't produce any problems.
