@@ -93,5 +93,6 @@ As for improving the data, it may help if you do per-channel normalization of da
 
 Notice, that in my preprocessing I'm cutting away all of the space behind the bird and I'm only leaving a part of the space in front of it that does actually matter more or less. Feeding the whole picture to the network is probably not going to be an improvement, more like vice-versa, because that information is actually completely irrelevant.
 
+![](tested-model.png)
 
 License: public domain.
