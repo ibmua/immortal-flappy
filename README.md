@@ -39,6 +39,7 @@ I don't have a lot of prior knowledge in the field of reinforcement learning, wh
 The whole process is divided into these parts:
 
 1.	**Gather memories/frames - situations and choices - of successes and store 📥 them.**
+
 `preset	=	'gather'` in the code.
 
 As part of this process I trained two neural networks that were later discarded. They were needed as random (10% chance to flap tactics) will literally not get you far in this game. Even more pressing reason, though, was that random won't get you far in other games. In this exact one, random's not very efficient, but you probably can get enough data even purely out of random moves in reasonable time. It does take a lot of frames and time to get lucky enough to pass the first few pipes using pure random, but if you won't provide the future neural network with too many pixels in front and will provide it with none behind the bird, passing those two or three starting pipes over many many times, you'll probably be able to accumulate enough information for network to infer how to pass all the later pipes, as this process is going to look exactly the same to them. But that's neither interesting, not effecient. That said, pure random is how the training simply has to begin, as we don't have any data at all at the start. So while I don't use pure random all the way, I do use it at the beginning to accumulate a certain amount of **memories/frames of successful navigation** to train the network to not make the 🐦 bird flop ⚰ before even reaching the 🏁 first pipe.
@@ -54,6 +55,7 @@ We also sometimes pick moves by random (say, with a 5% chance) even if we aren't
 By this point you'll see Flappy only passing several of the first pipes most of the time. And this is completely okay. I've accumulated something like 6 datasets 40960 samples (moves 👣) each, which translated to 13GB.
 
 2.	**Train a new decision neural network on the accumulated data of successful moves in a straightforward supervised manner. Then run this new network to gather data again, but without any sort of exploration. No random except for stochastic action - viewing decision network's output as a chance assigned to choosing a particular action instead of acting on simply the choice it finds to be better. The decision network also learns from the new successful moves it makes, not just from those previous datasets.**
+
 `preset	=	'train_on_stored_data_and_gather'` in the code.
 
 This was damn important. Notice, though, that pretty similar thing is usually attempted and [others who tried training a neural network to fly flappy have](https://pdfs.semanticscholar.org/b56c/7703337cb9db008422b9b3410c97fff8bb54.pdf) trained the network in a single run, but gradually lowering 📉 the randomness 🎲 of moves 👣. I didn't consider, though, that training in a single run - training a single network all the time - is a very good idea. Instead I chose to iterate on the neural networks, retraining from scratch, from random initializations.
@@ -69,6 +71,7 @@ Mind, though, that as we disabled most of diversity and risky move taking in thi
 Last time I did this I produced some 27 datasets 40960 sample each, around 57GB, which seemed to be enough. Of course, just like with the first step: more is better. As you'll find below, there is a way you can lower the amount of space (GB) at least twice in case you have very little space on your computer.
 
 3.	**Take this new more regular data and train a new decision network on it. Test the network you trained and check how it scores. If it's not immortal, retry this step.**
+
 `preset	=	'train_on_data'` in the code.
 
 The data we get from step 2 is much less problematic. It does not contain as many contradicting views on how to act in similar situations and it doesn't contain misguidances that would get us to a more difficult situation from a safer one just because we were historically able to resolve a similar tougher situation after we moved into it. It's a lot more of a simple distinct strategy of how we act in what situation, not simply a dump of all possible moves that are forgiving to make and it naturally doesn't take a lot of overfitting to fit this data - it fits smoothly, because it's consistent. You'll notice that your `loss` for backpropagation drops a lot faster and to a much lower point than when training on data from step 1.
